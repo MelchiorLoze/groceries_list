@@ -3,28 +3,29 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import ListScreen from './src/components/ListScreen';
 import PantryScreen from './src/components/PantryScreen';
 
-const Tab = createBottomTabNavigator();
-
-enum Routes {
+enum Route {
   LIST = 'List',
   PANTRY = 'Pantry',
 }
 
-const getTabBarIcon = (
-  route: { name: string },
-  color: string,
-  size: number,
-) => {
+type TabParamList = {
+  [_ in Route]: undefined;
+};
+
+const Tab = createBottomTabNavigator<TabParamList>();
+
+const getTabBarIcon = (route: { name: Route }, color: string, size: number) => {
   let iconName;
 
   switch (route.name) {
-    case Routes.LIST:
+    case Route.LIST:
       iconName = 'list-ul';
       break;
-    case Routes.PANTRY:
+    case Route.PANTRY:
       iconName = 'snowflake-o';
       break;
     default:
@@ -40,12 +41,21 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <NavigationContainer>
         <Tab.Navigator
-          initialRouteName={Routes.LIST}
+          initialRouteName={Route.LIST}
           screenOptions={({ route }) => ({
+            headerShown: false,
             tabBarIcon: ({ color, size }) => getTabBarIcon(route, color, size),
           })}>
-          <Tab.Screen name={Routes.LIST} component={ListScreen} />
-          <Tab.Screen name={Routes.PANTRY} component={PantryScreen} />
+          <Tab.Screen
+            name={Route.LIST}
+            component={ListScreen}
+            options={{ tabBarTestID: 'tab-bar-list' }}
+          />
+          <Tab.Screen
+            name={Route.PANTRY}
+            component={PantryScreen}
+            options={{ tabBarTestID: 'tab-bar-pantry' }}
+          />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
