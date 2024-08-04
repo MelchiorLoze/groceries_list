@@ -39,6 +39,7 @@ const ProductList: React.FC<ProductListProps> = ({
 const styles = StyleSheet.create({
   container: {
     height: '50%',
+    gap: 16,
   },
   title: {
     fontSize: 24,
