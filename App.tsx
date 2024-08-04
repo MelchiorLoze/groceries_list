@@ -4,11 +4,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import ListScreen from './src/components/ListScreen';
-import PantryScreen from './src/components/PantryScreen';
+import ProductsScreen from './src/components/ProductsScreen/ProductsScreen';
+import PantryScreen from './src/components/PantryScreen/PantryScreen';
 
 enum Route {
-  LIST = 'List',
+  PRODUCTS = 'Products',
   PANTRY = 'Pantry',
 }
 
@@ -22,7 +22,7 @@ const getTabBarIcon = (route: { name: Route }, color: string, size: number) => {
   let iconName;
 
   switch (route.name) {
-    case Route.LIST:
+    case Route.PRODUCTS:
       iconName = 'list-ul';
       break;
     case Route.PANTRY:
@@ -41,15 +41,15 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <NavigationContainer>
         <Tab.Navigator
-          initialRouteName={Route.LIST}
+          initialRouteName={Route.PRODUCTS}
           screenOptions={({ route }) => ({
             headerShown: false,
             tabBarIcon: ({ color, size }) => getTabBarIcon(route, color, size),
           })}>
           <Tab.Screen
-            name={Route.LIST}
-            component={ListScreen}
-            options={{ tabBarTestID: 'tab-bar-list' }}
+            name={Route.PRODUCTS}
+            component={ProductsScreen}
+            options={{ tabBarTestID: 'tab-bar-products' }}
           />
           <Tab.Screen
             name={Route.PANTRY}

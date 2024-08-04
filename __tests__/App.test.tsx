@@ -19,13 +19,13 @@ it('renders correctly', () => {
 
 it('renders the tab navigation bar correctly', () => {
   render(<App />);
-  within(screen.getByTestId('tab-bar-list')).getByText('List');
+  within(screen.getByTestId('tab-bar-products')).getByText('Products');
   within(screen.getByTestId('tab-bar-pantry')).getByText('Pantry');
 });
 
-it('renders the List screen by default', () => {
+it('renders the Products screen by default', () => {
   render(<App />);
-  screen.getByText('List Screen');
+  screen.getByText('Products to buy');
   expect(screen.queryByText('Pantry Screen')).toBeNull();
 });
 
@@ -34,5 +34,5 @@ it('renders the Pantry screen when the Pantry tab is pressed', async () => {
   const pantryTab = screen.getByTestId('tab-bar-pantry');
   await user.press(pantryTab);
   screen.getByText('Pantry Screen');
-  expect(screen.queryByText('List Screen')).toBeNull();
+  expect(screen.queryByText('Products to buy')).toBeNull();
 });
