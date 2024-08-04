@@ -38,17 +38,21 @@ const ProductsScreen: React.FC = () => {
     <View style={styles.container}>
       <ProductList
         title="Products to buy"
-        productItems={productItems.filter((item) => item.quantity > 0)}
+        productItems={productItems.filter((item) => item.quantity)}
         updateProduct={updateProduct}
         removeProduct={removeProduct}
       />
       <ProductList
         title="History"
-        productItems={productItems.filter((item) => item.quantity === 0)}
+        productItems={productItems.filter((item) => !item.quantity)}
         updateProduct={updateProduct}
         removeProduct={removeProduct}
       />
-      <Pressable style={styles.addButton} onPress={addProduct}>
+      <Pressable
+        style={styles.addButton}
+        onPress={addProduct}
+        accessibilityRole="button"
+        accessibilityLabel="Add a new product">
         <Icon name="plus" color="white" size={24} />
       </Pressable>
     </View>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, Text } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../../types';
 import ProductItem from './ProductItem';
 
@@ -17,11 +17,11 @@ const ProductList: React.FC<ProductListProps> = ({
   removeProduct,
 }) => {
   return (
-    <>
+    <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <FlatList
         contentContainerStyle={styles.itemList}
-        data={productItems.filter((item) => item.quantity > 0)}
+        data={productItems}
         renderItem={(itemInfo) => (
           <ProductItem
             product={itemInfo.item}
@@ -32,11 +32,14 @@ const ProductList: React.FC<ProductListProps> = ({
           />
         )}
       />
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    height: '50%',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',

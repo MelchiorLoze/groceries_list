@@ -8,4 +8,5 @@ module.exports = {
       extends: ['plugin:testing-library/react'],
     },
   ],
+  curly: ['multi-or-nest', 'consistent'],
 };

@@ -22,32 +22,37 @@ const ProductItem: React.FC<ProductItemProps> = ({
         <View style={styles.quantityCtaSection}>
           <Pressable
             style={styles.quantityCta}
-            onPress={() => updateProduct(product.quantity + 1)}>
+            onPress={() => updateProduct(product.quantity + 1)}
+            accessibilityRole="button"
+            accessibilityLabel={`Add one ${product.name}`}>
             <Icon name="plus" size={16} />
           </Pressable>
           {product.quantity > 0 && (
-            <Pressable style={styles.quantityCta}>
-              <Icon
-                name="minus"
-                onPress={() => updateProduct(product.quantity - 1)}
-                size={16}
-              />
+            <Pressable
+              style={styles.quantityCta}
+              onPress={() => updateProduct(product.quantity - 1)}
+              accessibilityRole="button"
+              accessibilityLabel={`Remove one ${product.name}`}>
+              <Icon name="minus" size={16} />
             </Pressable>
           )}
         </View>
         <View style={styles.quantityCtaSection}>
           {product.quantity > 0 && (
-            <Pressable style={styles.quantityCta}>
-              <Icon
-                name="cart-plus"
-                onPress={() => updateProduct(0)}
-                color="green"
-                size={16}
-              />
+            <Pressable
+              style={styles.quantityCta}
+              onPress={() => updateProduct(0)}
+              accessibilityRole="button"
+              accessibilityLabel={`Mark ${product.name} as bought`}>
+              <Icon name="cart-plus" color="green" size={16} />
             </Pressable>
           )}
-          <Pressable style={styles.quantityCta}>
-            <Icon name="trash" onPress={removeProduct} color="red" size={16} />
+          <Pressable
+            style={styles.quantityCta}
+            onPress={removeProduct}
+            accessibilityRole="button"
+            accessibilityLabel={`Remove product ${product.name}`}>
+            <Icon name="trash" color="red" size={16} />
           </Pressable>
         </View>
       </View>
