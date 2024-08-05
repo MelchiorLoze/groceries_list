@@ -13,6 +13,8 @@ import ProductScreens from './ProductsScreen';
 
 const user = userEvent.setup();
 
+jest.useFakeTimers();
+
 it('renders correctly', () => {
   render(<ProductScreens />);
   screen.getByText('Products to buy');

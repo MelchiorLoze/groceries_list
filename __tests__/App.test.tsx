@@ -13,6 +13,8 @@ import App from '../App';
 
 const user = userEvent.setup();
 
+jest.useFakeTimers();
+
 it('renders correctly', () => {
   render(<App />);
 });
