@@ -8,5 +8,10 @@ module.exports = {
       extends: ['plugin:testing-library/react'],
     },
   ],
-  curly: ['multi-or-nest', 'consistent'],
+  rules: {
+    'no-console': 'warn',
+    'no-debugger': 'warn',
+    curly: ['error', 'multi-or-nest', 'consistent'],
+  },
+  plugins: ['@typescript-eslint', 'jest'],
 };
