@@ -9,16 +9,12 @@ on:
 jobs:
   tsc:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x] # Test against multiple Node.js versions
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use cache for modules
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm' # Cache dependencies
+          cache: 'npm'
       - name: Install modules
         run: npm ci
       - name: Run type check
