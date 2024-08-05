@@ -1,19 +1,16 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useProductContext } from '../contexts/ProductsContext';
 import { Product } from '../types/Product';
 
 interface ProductItemProps {
   product: Product;
-  updateProduct: (quantity: number) => void;
-  removeProduct: () => void;
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({
-  product,
-  updateProduct,
-  removeProduct,
-}) => {
+const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
+  const { updateProduct, removeProduct } = useProductContext();
+
   return (
     <View style={styles.container}>
       <Text>{product.name}</Text>
@@ -22,7 +19,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
         <View style={styles.quantityCtaSection}>
           <Pressable
             style={styles.quantityCta}
-            onPress={() => updateProduct(product.quantity + 1)}
+            onPress={() => updateProduct(product.id, product.quantity + 1)}
             accessibilityRole="button"
             accessibilityLabel={`Add one ${product.name}`}>
             <Icon name="plus" size={16} />
@@ -30,7 +27,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
           {product.quantity > 0 && (
             <Pressable
               style={styles.quantityCta}
-              onPress={() => updateProduct(product.quantity - 1)}
+              onPress={() => updateProduct(product.id, product.quantity - 1)}
               accessibilityRole="button"
               accessibilityLabel={`Remove one ${product.name}`}>
               <Icon name="minus" size={16} />
@@ -41,7 +38,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
           {product.quantity > 0 && (
             <Pressable
               style={styles.quantityCta}
-              onPress={() => updateProduct(0)}
+              onPress={() => updateProduct(product.id, 0)}
               accessibilityRole="button"
               accessibilityLabel={`Mark ${product.name} as bought`}>
               <Icon name="cart-plus" color="green" size={16} />
@@ -49,7 +46,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
           )}
           <Pressable
             style={styles.quantityCta}
-            onPress={removeProduct}
+            onPress={() => removeProduct(product.id)}
             accessibilityRole="button"
             accessibilityLabel={`Remove product ${product.name}`}>
             <Icon name="trash" color="red" size={16} />

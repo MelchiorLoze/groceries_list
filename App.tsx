@@ -4,6 +4,7 @@ import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { ProductProvider } from './src/contexts/ProductsContext';
 import { PantryScreen } from './src/screens/PantryScreen';
 import { ProductsScreen } from './src/screens/ProductsScreen';
 
@@ -38,27 +39,30 @@ const getTabBarIcon = (route: { name: Route }, color: string, size: number) => {
 
 function App(): React.JSX.Element {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName={Route.PRODUCTS}
-          screenOptions={({ route }) => ({
-            headerShown: false,
-            tabBarIcon: ({ color, size }) => getTabBarIcon(route, color, size),
-          })}>
-          <Tab.Screen
-            name={Route.PRODUCTS}
-            component={ProductsScreen}
-            options={{ tabBarTestID: 'tab-bar-products' }}
-          />
-          <Tab.Screen
-            name={Route.PANTRY}
-            component={PantryScreen}
-            options={{ tabBarTestID: 'tab-bar-pantry' }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <ProductProvider>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            initialRouteName={Route.PRODUCTS}
+            screenOptions={({ route }) => ({
+              headerShown: false,
+              tabBarIcon: ({ color, size }) =>
+                getTabBarIcon(route, color, size),
+            })}>
+            <Tab.Screen
+              name={Route.PRODUCTS}
+              component={ProductsScreen}
+              options={{ tabBarTestID: 'tab-bar-products' }}
+            />
+            <Tab.Screen
+              name={Route.PANTRY}
+              component={PantryScreen}
+              options={{ tabBarTestID: 'tab-bar-pantry' }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </ProductProvider>
   );
 }
 

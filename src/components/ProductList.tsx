@@ -6,31 +6,16 @@ import ProductItem from './ProductItem';
 interface ProductListProps {
   title: string;
   productItems: Product[];
-  updateProduct: (index: number, quantity: number) => void;
-  removeProduct: (index: number) => void;
 }
 
-const ProductList: React.FC<ProductListProps> = ({
-  title,
-  productItems,
-  updateProduct,
-  removeProduct,
-}) => {
+const ProductList: React.FC<ProductListProps> = ({ title, productItems }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <FlatList
         contentContainerStyle={styles.itemList}
         data={productItems}
-        renderItem={(itemInfo) => (
-          <ProductItem
-            product={itemInfo.item}
-            updateProduct={(quantity: number) =>
-              updateProduct(itemInfo.index, quantity)
-            }
-            removeProduct={() => removeProduct(itemInfo.index)}
-          />
-        )}
+        renderItem={(itemInfo) => <ProductItem product={itemInfo.item} />}
       />
     </View>
   );

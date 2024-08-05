@@ -12,8 +12,8 @@ import { Product } from '../../types/Product';
 interface ProductContextProps {
   productItems: Product[];
   addProduct: () => void;
-  updateProduct: (index: number, quantity: number) => void;
-  removeProduct: (index: number) => void;
+  updateProduct: (id: number, quantity: number) => void;
+  removeProduct: (id: number) => void;
 }
 
 const ProductContext = createContext<ProductContextProps | undefined>(
@@ -25,36 +25,43 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     AsyncStorage.getItem('productItems', (error, result) => {
-      if (!error && result)
-        setProductItems((prev) => [...JSON.parse(result), ...prev]);
+      if (!error && result?.length) setProductItems(JSON.parse(result));
     });
   }, []);
 
   useEffect(() => {
-    AsyncStorage.setItem('productItems', JSON.stringify(productItems));
+    if (productItems.length)
+      AsyncStorage.setItem('productItems', JSON.stringify(productItems));
   }, [productItems]);
 
   const addProduct = () => {
     if (productItems.length < 100) {
+      const productItemsCount = productItems.length;
       setProductItems([
         ...productItems,
-        { name: `item ${productItems.length + 1}`, quantity: 1 },
+        {
+          id: productItemsCount + 1,
+          name: `item ${productItemsCount + 1}`,
+          quantity: 1,
+        },
       ]);
     }
   };
 
-  const updateProduct = (index: number, quantity: number) => {
+  const updateProduct = (id: number, quantity: number) => {
     setProductItems((prevItems) => {
       const newItems = [...prevItems];
-      newItems[index].quantity = quantity;
+      const itemToUpdate = newItems.find((item) => item.id === id);
+      if (itemToUpdate) itemToUpdate.quantity = quantity;
       return newItems;
     });
   };
 
-  const removeProduct = (index: number) => {
+  const removeProduct = (id: number) => {
     setProductItems((prevItems) => {
       const newItems = [...prevItems];
-      newItems.splice(index, 1);
+      const itemIndexToRemove = newItems.findIndex((item) => item.id === id);
+      newItems.splice(itemIndexToRemove, 1);
       return newItems;
     });
   };
