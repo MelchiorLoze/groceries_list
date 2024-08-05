@@ -1,11 +1,11 @@
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import ProductsScreen from './src/components/ProductsScreen/ProductsScreen';
-import PantryScreen from './src/components/PantryScreen/PantryScreen';
+import { PantryScreen } from './src/screens/PantryScreen';
+import { ProductsScreen } from './src/screens/ProductsScreen';
 
 enum Route {
   PRODUCTS = 'Products',

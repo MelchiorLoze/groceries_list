@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Product } from '../../types';
-import ProductList from './ProductList';
+import { ProductList } from '../../components';
+import { type Product } from '../../types/Product';
 
 const ProductsScreen: React.FC = () => {
   const [productItems, setProductItems] = useState<Product[]>([

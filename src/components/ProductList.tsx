@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { Product } from '../../types';
+import { type Product } from '../types/Product';
 import ProductItem from './ProductItem';
 
 interface ProductListProps {
