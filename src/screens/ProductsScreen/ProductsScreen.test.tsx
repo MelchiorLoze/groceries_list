@@ -21,19 +21,26 @@ jest.useFakeTimers();
 
 const product1 = { id: 1, name: 'item 1', quantity: 2 };
 
-const getTestInstance = async (
-  name: string,
-  parent?: ReactTestInstance,
-): Promise<ReactTestInstance> => {
-  let listTestInstance;
-  await waitFor(() => {
-    listTestInstance = parent
-      ? within(parent).getByText(name).parent?.parent
-      : screen.getByText(name).parent?.parent;
-  });
+const getProductListTestInstance = (name: string): ReactTestInstance => {
+  const listTestInstance = screen.getByText(name).parent?.parent;
   expect(listTestInstance).not.toBeNull();
-  if (!listTestInstance) throw new Error('Element not found');
+  if (!listTestInstance) throw new Error('Product list element not found');
   return listTestInstance;
+};
+
+const getProductItemTestInstance = async (
+  name: string,
+  productList: ReactTestInstance,
+): Promise<ReactTestInstance> => {
+  let productItemTestInstance;
+  await waitFor(() => {
+    productItemTestInstance =
+      within(productList).getByDisplayValue(name).parent?.parent;
+  });
+  expect(productItemTestInstance).not.toBeNull();
+  if (!productItemTestInstance)
+    throw new Error('Product item element not found');
+  return productItemTestInstance;
 };
 
 const Wrapper: React.FC<PropsWithChildren> = ({ children }) => (
@@ -52,13 +59,8 @@ it('adds a product when the add button is pressed', async () => {
   const addButton = screen.getByRole('button', { name: 'Add a new product' });
   await user.press(addButton);
 
-  const productsToBuyList = await getTestInstance('Products to buy');
-  getTestInstance('item 1', productsToBuyList);
-
-  await user.press(addButton);
-
-  const item2 = await getTestInstance('item 2', productsToBuyList);
-  within(item2).getByText('x1');
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
+  await getProductItemTestInstance('New product', productsToBuyList);
 });
 
 it('updates the quantity of a product when pressing +', async () => {
@@ -66,9 +68,9 @@ it('updates the quantity of a product when pressing +', async () => {
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
-  const productsToBuyList = await getTestInstance('Products to buy');
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
 
-  const item1 = await getTestInstance('item 1', productsToBuyList);
+  const item1 = await getProductItemTestInstance('item 1', productsToBuyList);
 
   within(item1).getByText('x2');
 
@@ -88,8 +90,8 @@ it("updates the quantity of a product when pressing + so that it's > 0 and moves
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
-  const historyList = await getTestInstance('History');
-  const item1 = await getTestInstance(product1.name, historyList);
+  const historyList = await getProductListTestInstance('History');
+  const item1 = await getProductItemTestInstance(product1.name, historyList);
 
   within(item1).getByText('x0');
 
@@ -100,8 +102,11 @@ it("updates the quantity of a product when pressing + so that it's > 0 and moves
 
   expect(within(historyList).queryByText(product1.name)).toBeNull();
 
-  const productsToBuyList = await getTestInstance('Products to buy');
-  const item2 = await getTestInstance(product1.name, productsToBuyList);
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
+  const item2 = await getProductItemTestInstance(
+    product1.name,
+    productsToBuyList,
+  );
 
   within(item2).getByText('x1');
 });
@@ -111,8 +116,8 @@ it('updates the quantity of a product when pressing -', async () => {
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
-  const productsToBuyList = await getTestInstance('Products to buy');
-  const item1 = await getTestInstance('item 1', productsToBuyList);
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
+  const item1 = await getProductItemTestInstance('item 1', productsToBuyList);
 
   const removeOneButton = within(item1).getByRole('button', {
     name: 'Remove one item 1',
@@ -122,8 +127,11 @@ it('updates the quantity of a product when pressing -', async () => {
 
   expect(within(productsToBuyList).queryByText(product1.name)).toBeNull();
 
-  const historyList = await getTestInstance('History');
-  const historyItem1 = await getTestInstance(product1.name, historyList);
+  const historyList = await getProductListTestInstance('History');
+  const historyItem1 = await getProductItemTestInstance(
+    product1.name,
+    historyList,
+  );
 
   within(historyItem1).getByText('x0');
 });
@@ -136,8 +144,11 @@ it("updates the quantity of a product when pressing - so that it's < 0 and moves
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
-  const productsToBuyList = await getTestInstance('Products to buy');
-  const item1 = await getTestInstance(product1.name, productsToBuyList);
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
+  const item1 = await getProductItemTestInstance(
+    product1.name,
+    productsToBuyList,
+  );
 
   within(item1).getByText('x1');
 
@@ -148,10 +159,26 @@ it("updates the quantity of a product when pressing - so that it's < 0 and moves
 
   expect(within(productsToBuyList).queryByText(product1.name)).toBeNull();
 
-  const historyList = await getTestInstance('History');
-  const item2 = await getTestInstance(product1.name, historyList);
+  const historyList = await getProductListTestInstance('History');
+  const item2 = await getProductItemTestInstance(product1.name, historyList);
 
   within(item2).getByText('x0');
+});
+
+it('updates the name of a product', async () => {
+  await AsyncStorage.setItem('productItems', JSON.stringify([product1]));
+
+  render(<ProductScreens />, { wrapper: Wrapper });
+
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
+  const item1 = await getProductItemTestInstance('item 1', productsToBuyList);
+
+  const nameInput = within(item1).getByDisplayValue('item 1');
+  await user.clear(nameInput);
+  await user.type(nameInput, 'new item 1');
+
+  expect(within(item1).queryByText('item 1')).toBeNull();
+  within(item1).queryByText('new item 1');
 });
 
 it('marks a product as bought when pressing the cart button', async () => {
@@ -159,9 +186,12 @@ it('marks a product as bought when pressing the cart button', async () => {
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
-  const productsToBuyList = await getTestInstance('Products to buy');
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
 
-  const item1 = await getTestInstance(product1.name, productsToBuyList);
+  const item1 = await getProductItemTestInstance(
+    product1.name,
+    productsToBuyList,
+  );
 
   const addOneButton = within(item1).getByRole('button', {
     name: 'Add one item 1',
@@ -175,8 +205,11 @@ it('marks a product as bought when pressing the cart button', async () => {
 
   expect(within(productsToBuyList).queryByText(product1.name)).toBeNull();
 
-  const historyList = await getTestInstance('History');
-  const historyItem1 = await getTestInstance(product1.name, historyList);
+  const historyList = await getProductListTestInstance('History');
+  const historyItem1 = await getProductItemTestInstance(
+    product1.name,
+    historyList,
+  );
 
   within(historyItem1).getByText('x0');
 });
@@ -186,8 +219,11 @@ it('removes a product when pressing the trash button', async () => {
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
-  const productsToBuyList = await getTestInstance('Products to buy');
-  const item1 = await getTestInstance(product1.name, productsToBuyList);
+  const productsToBuyList = await getProductListTestInstance('Products to buy');
+  const item1 = await getProductItemTestInstance(
+    product1.name,
+    productsToBuyList,
+  );
 
   const removeButton = within(item1).getByRole('button', {
     name: 'Remove product item 1',

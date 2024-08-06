@@ -4,6 +4,7 @@ import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import { ProductProvider } from './src/contexts/ProductsContext';
 import { PantryScreen } from './src/screens/PantryScreen';
 import { ProductsScreen } from './src/screens/ProductsScreen';
@@ -41,29 +42,39 @@ function App(): React.JSX.Element {
   return (
     <ProductProvider>
       <SafeAreaProvider>
-        <NavigationContainer>
-          <Tab.Navigator
-            initialRouteName={Route.PRODUCTS}
-            screenOptions={({ route }) => ({
-              headerShown: false,
-              tabBarIcon: ({ color, size }) =>
-                getTabBarIcon(route, color, size),
-            })}>
-            <Tab.Screen
-              name={Route.PRODUCTS}
-              component={ProductsScreen}
-              options={{ tabBarTestID: 'tab-bar-products' }}
-            />
-            <Tab.Screen
-              name={Route.PANTRY}
-              component={PantryScreen}
-              options={{ tabBarTestID: 'tab-bar-pantry' }}
-            />
-          </Tab.Navigator>
-        </NavigationContainer>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <NavigationContainer>
+            <Tab.Navigator
+              initialRouteName={Route.PRODUCTS}
+              screenOptions={({ route }) => ({
+                headerShown: false,
+                tabBarIcon: ({ color, size }) =>
+                  getTabBarIcon(route, color, size),
+              })}>
+              <Tab.Screen
+                name={Route.PRODUCTS}
+                component={ProductsScreen}
+                options={{ tabBarTestID: 'tab-bar-products' }}
+              />
+              <Tab.Screen
+                name={Route.PANTRY}
+                component={PantryScreen}
+                options={{ tabBarTestID: 'tab-bar-pantry' }}
+              />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </KeyboardAvoidingView>
       </SafeAreaProvider>
     </ProductProvider>
   );
 }
+
+const styles = {
+  container: {
+    flex: 1,
+  },
+};
 
 export default App;

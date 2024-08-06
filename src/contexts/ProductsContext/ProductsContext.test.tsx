@@ -28,7 +28,7 @@ it('adds a product', async () => {
   await waitFor(() =>
     expect(result.current.productItems).toEqual([
       item1,
-      { id: 2, name: 'item 2', quantity: 1 },
+      { id: 2, name: 'New product', quantity: 1 },
     ]),
   );
 });
@@ -40,10 +40,14 @@ it('updates a product', async () => {
 
   await waitFor(() => expect(result.current.productItems).toEqual([item1]));
 
-  act(() => result.current.updateProduct(item1.id, 2));
+  act(() =>
+    result.current.updateProduct({ ...item1, name: 'new name', quantity: 2 }),
+  );
 
   await waitFor(() =>
-    expect(result.current.productItems).toEqual([{ ...item1, quantity: 2 }]),
+    expect(result.current.productItems).toEqual([
+      { ...item1, name: 'new name', quantity: 2 },
+    ]),
   );
 });
 

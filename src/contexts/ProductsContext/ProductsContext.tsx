@@ -12,7 +12,7 @@ import { Product } from '../../types/Product';
 interface ProductContextProps {
   productItems: Product[];
   addProduct: () => void;
-  updateProduct: (id: number, quantity: number) => void;
+  updateProduct: (product: Product) => void;
   removeProduct: (id: number) => void;
 }
 
@@ -41,18 +41,20 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
         ...productItems,
         {
           id: productItemsCount + 1,
-          name: `item ${productItemsCount + 1}`,
+          name: 'New product',
           quantity: 1,
         },
       ]);
     }
   };
 
-  const updateProduct = (id: number, quantity: number) => {
+  const updateProduct = (product: Product) => {
     setProductItems((prevItems) => {
       const newItems = [...prevItems];
-      const itemToUpdate = newItems.find((item) => item.id === id);
-      if (itemToUpdate) itemToUpdate.quantity = quantity;
+      const itemIndexToUpdate = newItems.findIndex(
+        (item) => item.id === product.id,
+      );
+      newItems[itemIndexToUpdate] = product;
       return newItems;
     });
   };
@@ -68,7 +70,12 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <ProductContext.Provider
-      value={{ productItems, addProduct, updateProduct, removeProduct }}>
+      value={{
+        productItems,
+        addProduct,
+        updateProduct,
+        removeProduct,
+      }}>
       {children}
     </ProductContext.Provider>
   );

@@ -23,7 +23,7 @@ const ProductList: React.FC<ProductListProps> = ({ title, productItems }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: '50%',
+    //height: '50%',
     gap: 16,
   },
   title: {
