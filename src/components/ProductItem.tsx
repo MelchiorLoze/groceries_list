@@ -21,48 +21,46 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
             updateProduct({ ...product, name: newName });
         }}
       />
-      <View style={styles.quantitySection}>
-        <Text>x{product.quantity}</Text>
-        <View style={styles.quantityCtaSection}>
+      <Text>x{product.quantity}</Text>
+      <View style={styles.quantityCtaSection}>
+        <Pressable
+          style={styles.quantityCta}
+          onPress={() =>
+            updateProduct({ ...product, quantity: product.quantity + 1 })
+          }
+          accessibilityRole="button"
+          accessibilityLabel={`Add one ${product.name}`}>
+          <Icon name="plus" size={16} />
+        </Pressable>
+        {product.quantity > 0 && (
           <Pressable
             style={styles.quantityCta}
             onPress={() =>
-              updateProduct({ ...product, quantity: product.quantity + 1 })
+              updateProduct({ ...product, quantity: product.quantity - 1 })
             }
             accessibilityRole="button"
-            accessibilityLabel={`Add one ${product.name}`}>
-            <Icon name="plus" size={16} />
+            accessibilityLabel={`Remove one ${product.name}`}>
+            <Icon name="minus" size={16} />
           </Pressable>
-          {product.quantity > 0 && (
-            <Pressable
-              style={styles.quantityCta}
-              onPress={() =>
-                updateProduct({ ...product, quantity: product.quantity - 1 })
-              }
-              accessibilityRole="button"
-              accessibilityLabel={`Remove one ${product.name}`}>
-              <Icon name="minus" size={16} />
-            </Pressable>
-          )}
-        </View>
-        <View style={styles.quantityCtaSection}>
-          {product.quantity > 0 && (
-            <Pressable
-              style={styles.quantityCta}
-              onPress={() => updateProduct({ ...product, quantity: 0 })}
-              accessibilityRole="button"
-              accessibilityLabel={`Mark ${product.name} as bought`}>
-              <Icon name="cart-plus" color="green" size={16} />
-            </Pressable>
-          )}
+        )}
+      </View>
+      <View style={styles.quantityCtaSection}>
+        {product.quantity > 0 && (
           <Pressable
             style={styles.quantityCta}
-            onPress={() => removeProduct(product.id)}
+            onPress={() => updateProduct({ ...product, quantity: 0 })}
             accessibilityRole="button"
-            accessibilityLabel={`Remove product ${product.name}`}>
-            <Icon name="trash" color="red" size={16} />
+            accessibilityLabel={`Mark ${product.name} as bought`}>
+            <Icon name="cart-plus" color="green" size={16} />
           </Pressable>
-        </View>
+        )}
+        <Pressable
+          style={styles.quantityCta}
+          onPress={() => removeProduct(product.id)}
+          accessibilityRole="button"
+          accessibilityLabel={`Remove product ${product.name}`}>
+          <Icon name="trash" color="red" size={16} />
+        </Pressable>
       </View>
     </View>
   );
@@ -73,6 +71,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 16,
+    gap: 8,
     backgroundColor: 'white',
     borderRadius: 8,
     alignItems: 'center',
@@ -80,11 +79,7 @@ const styles = StyleSheet.create({
   nameInput: {
     padding: 0,
     height: '100%',
-  },
-  quantitySection: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
+    flexGrow: 1,
   },
   quantityCtaSection: {
     alignItems: 'center',
