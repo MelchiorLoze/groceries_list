@@ -6,7 +6,6 @@ import {
   render,
   screen,
   userEvent,
-  waitFor,
   within,
 } from '@testing-library/react-native';
 
@@ -21,8 +20,10 @@ jest.useFakeTimers();
 
 const product1 = { id: 1, name: 'item 1', quantity: 2 };
 
-const getProductListTestInstance = (name: string): ReactTestInstance => {
-  const listTestInstance = screen.getByText(name).parent?.parent;
+const getProductListTestInstance = async (
+  name: string,
+): Promise<ReactTestInstance> => {
+  const listTestInstance = (await screen.findByText(name)).parent?.parent;
   expect(listTestInstance).not.toBeNull();
   if (!listTestInstance) throw new Error('Product list element not found');
   return listTestInstance;
@@ -32,11 +33,9 @@ const getProductItemTestInstance = async (
   name: string,
   productList: ReactTestInstance,
 ): Promise<ReactTestInstance> => {
-  let productItemTestInstance;
-  await waitFor(() => {
-    productItemTestInstance =
-      within(productList).getByDisplayValue(name).parent?.parent;
-  });
+  const productItemTestInstance = (
+    await within(productList).findByDisplayValue(name)
+  ).parent?.parent;
   expect(productItemTestInstance).not.toBeNull();
   if (!productItemTestInstance)
     throw new Error('Product item element not found');
