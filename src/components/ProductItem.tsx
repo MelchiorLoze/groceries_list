@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useProductContext } from '../contexts/ProductsContext';
@@ -9,16 +9,29 @@ interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
-  const { updateProduct, removeProduct } = useProductContext();
+  const { updateProduct, removeProduct, focusedItemId, unsetFocusedItemId } =
+    useProductContext();
+  const inputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (inputRef?.current && product.id === focusedItemId) {
+      inputRef.current.focus();
+      unsetFocusedItemId();
+    }
+  }, [focusedItemId, inputRef, product, unsetFocusedItemId]);
 
   return (
     <View style={styles.container}>
       <TextInput
+        ref={inputRef}
         style={styles.nameInput}
         value={product.name}
         onChangeText={(newName) => {
           if (newName !== product.name)
             updateProduct({ ...product, name: newName });
+        }}
+        onBlur={() => {
+          if (!product.name) updateProduct({ ...product, name: 'New product' });
         }}
       />
       <Text>x{product.quantity}</Text>

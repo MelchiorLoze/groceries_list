@@ -28,7 +28,7 @@ it('adds a product', async () => {
   await waitFor(() =>
     expect(result.current.productItems).toEqual([
       item1,
-      { id: 2, name: 'New product', quantity: 1 },
+      { id: 2, name: '', quantity: 1 },
     ]),
   );
 });

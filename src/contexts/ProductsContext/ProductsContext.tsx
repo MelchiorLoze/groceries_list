@@ -14,6 +14,8 @@ interface ProductContextProps {
   addProduct: () => void;
   updateProduct: (product: Product) => void;
   removeProduct: (id: number) => void;
+  focusedItemId: number | null;
+  unsetFocusedItemId: () => void;
 }
 
 const ProductContext = createContext<ProductContextProps | undefined>(
@@ -22,6 +24,7 @@ const ProductContext = createContext<ProductContextProps | undefined>(
 
 export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [productItems, setProductItems] = useState<Product[]>([]);
+  const [focusedItemId, setFocusedItemId] = useState<number | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem('productItems', (error, result) => {
@@ -41,10 +44,11 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
         ...productItems,
         {
           id: productItemsCount + 1,
-          name: 'New product',
+          name: '',
           quantity: 1,
         },
       ]);
+      setFocusedItemId(productItemsCount + 1);
     }
   };
 
@@ -68,6 +72,10 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
+  const unsetFocusedItemId = () => {
+    setFocusedItemId(null);
+  };
+
   return (
     <ProductContext.Provider
       value={{
@@ -75,6 +83,8 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
         addProduct,
         updateProduct,
         removeProduct,
+        focusedItemId,
+        unsetFocusedItemId,
       }}>
       {children}
     </ProductContext.Provider>

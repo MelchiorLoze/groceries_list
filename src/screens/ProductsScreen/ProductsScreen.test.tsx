@@ -59,7 +59,7 @@ it('adds a product when the add button is pressed', async () => {
   await user.press(addButton);
 
   const productsToBuyList = await getProductListTestInstance('Products to buy');
-  await getProductItemTestInstance('New product', productsToBuyList);
+  await getProductItemTestInstance('', productsToBuyList);
 });
 
 it('updates the quantity of a product when pressing +', async () => {
