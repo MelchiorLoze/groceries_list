@@ -11,6 +11,7 @@ import { Product } from '../../types/Product';
 
 interface ProductContextProps {
   productItems: Product[];
+  setProductItems: (items: Product[]) => void;
   addProduct: () => void;
   updateProduct: (product: Product) => void;
   removeProduct: (id: number) => void;
@@ -80,6 +81,7 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
     <ProductContext.Provider
       value={{
         productItems,
+        setProductItems,
         addProduct,
         updateProduct,
         removeProduct,

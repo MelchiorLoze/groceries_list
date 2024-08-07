@@ -1,21 +1,26 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ProductList } from '../../components';
+import ProductItem from '../../components/ProductItem';
 import { useProductContext } from '../../contexts/ProductsContext';
 
 const ProductsScreen: React.FC = () => {
-  const { productItems, addProduct } = useProductContext();
+  const { productItems, setProductItems, addProduct } = useProductContext();
 
   return (
     <View style={styles.container}>
-      <ProductList
-        title="Products to buy"
-        productItems={productItems.filter((item) => item.quantity)}
-      />
-      <ProductList
-        title="History"
-        productItems={productItems.filter((item) => !item.quantity)}
+      <Text style={styles.title}>Products to buy</Text>
+      <DraggableFlatList
+        contentContainerStyle={styles.list}
+        data={productItems}
+        renderItem={({ item, drag }) => (
+          <ProductItem product={item} drag={drag} />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        onDragEnd={({ data }) => {
+          setProductItems(data);
+        }}
       />
       <Pressable
         style={styles.addButton}
@@ -33,6 +38,13 @@ const styles = StyleSheet.create({
     height: '100%',
     gap: 16,
     padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  list: {
+    gap: 8,
   },
   addButton: {
     position: 'absolute',
