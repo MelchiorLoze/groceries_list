@@ -63,7 +63,7 @@ it('adds a product when the add button is pressed', async () => {
 });
 
 it('updates the quantity of a product when pressing +', async () => {
-  await AsyncStorage.setItem('productItems', JSON.stringify([product1]));
+  await AsyncStorage.setItem('productsToBuy', JSON.stringify([product1]));
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
@@ -83,7 +83,7 @@ it('updates the quantity of a product when pressing +', async () => {
 
 it("updates the quantity of a product when pressing + so that it's > 0 and moves it to Product to buy", async () => {
   await AsyncStorage.setItem(
-    'productItems',
+    'productsToBuy',
     JSON.stringify([{ ...product1, quantity: 0 }]),
   );
 
@@ -111,7 +111,7 @@ it("updates the quantity of a product when pressing + so that it's > 0 and moves
 });
 
 it('updates the quantity of a product when pressing -', async () => {
-  await AsyncStorage.setItem('productItems', JSON.stringify([product1]));
+  await AsyncStorage.setItem('productsToBuy', JSON.stringify([product1]));
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
@@ -137,7 +137,7 @@ it('updates the quantity of a product when pressing -', async () => {
 
 it("updates the quantity of a product when pressing - so that it's < 0 and moves it to History", async () => {
   await AsyncStorage.setItem(
-    'productItems',
+    'productsToBuy',
     JSON.stringify([{ ...product1, quantity: 1 }]),
   );
 
@@ -165,7 +165,7 @@ it("updates the quantity of a product when pressing - so that it's < 0 and moves
 });
 
 it('updates the name of a product', async () => {
-  await AsyncStorage.setItem('productItems', JSON.stringify([product1]));
+  await AsyncStorage.setItem('productsToBuy', JSON.stringify([product1]));
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
@@ -181,7 +181,7 @@ it('updates the name of a product', async () => {
 });
 
 it('marks a product as bought when pressing the cart button', async () => {
-  await AsyncStorage.setItem('productItems', JSON.stringify([product1]));
+  await AsyncStorage.setItem('productsToBuy', JSON.stringify([product1]));
 
   render(<ProductScreens />, { wrapper: Wrapper });
 
@@ -214,7 +214,7 @@ it('marks a product as bought when pressing the cart button', async () => {
 });
 
 it('removes a product when pressing the trash button', async () => {
-  await AsyncStorage.setItem('productItems', JSON.stringify([product1]));
+  await AsyncStorage.setItem('productsToBuy', JSON.stringify([product1]));
 
   render(<ProductScreens />, { wrapper: Wrapper });
 

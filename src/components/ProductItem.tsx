@@ -92,6 +92,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, drag }) => {
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 8,

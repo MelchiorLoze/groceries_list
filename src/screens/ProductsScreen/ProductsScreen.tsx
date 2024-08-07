@@ -1,27 +1,50 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import {
+  NestableDraggableFlatList,
+  NestableScrollContainer,
+} from 'react-native-draggable-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProductItem from '../../components/ProductItem';
 import { useProductContext } from '../../contexts/ProductsContext';
 
 const ProductsScreen: React.FC = () => {
-  const { productItems, setProductItems, addProduct } = useProductContext();
+  const {
+    productsToBuy,
+    setProductsToBuy,
+    productsHistory,
+    setProductsHistory,
+    addProduct,
+  } = useProductContext();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Products to buy</Text>
-      <DraggableFlatList
-        contentContainerStyle={styles.list}
-        data={productItems}
-        renderItem={({ item, drag }) => (
-          <ProductItem product={item} drag={drag} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        onDragEnd={({ data }) => {
-          setProductItems(data);
-        }}
-      />
+      <NestableScrollContainer contentContainerStyle={styles.listsContainer}>
+        <Text style={styles.listTitle}>Products to buy</Text>
+        <NestableDraggableFlatList
+          contentContainerStyle={styles.list}
+          data={productsToBuy}
+          renderItem={({ item, drag }) => (
+            <ProductItem product={item} drag={drag} />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          onDragEnd={({ data }) => {
+            setProductsToBuy(data);
+          }}
+        />
+        <Text style={styles.listTitle}>History</Text>
+        <NestableDraggableFlatList
+          contentContainerStyle={styles.list}
+          data={productsHistory}
+          renderItem={({ item, drag }) => (
+            <ProductItem product={item} drag={drag} />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          onDragEnd={({ data }) => {
+            setProductsHistory(data);
+          }}
+        />
+      </NestableScrollContainer>
       <Pressable
         style={styles.addButton}
         onPress={addProduct}
@@ -36,10 +59,12 @@ const ProductsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    gap: 16,
     padding: 16,
   },
-  title: {
+  listsContainer: {
+    gap: 16,
+  },
+  listTitle: {
     fontSize: 24,
     fontWeight: 'bold',
   },
