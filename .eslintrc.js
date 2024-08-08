@@ -9,9 +9,11 @@ module.exports = {
     },
   ],
   rules: {
+    'arrow-body-style': ['warn', 'as-needed'],
+    curly: ['error', 'multi-or-nest', 'consistent'],
     'no-console': 'warn',
     'no-debugger': 'warn',
-    curly: ['error', 'multi-or-nest', 'consistent'],
+    'react-native/no-unused-styles': 'warn',
   },
-  plugins: ['@typescript-eslint', 'jest'],
+  plugins: ['react', 'react-native', '@typescript-eslint', 'jest'],
 };

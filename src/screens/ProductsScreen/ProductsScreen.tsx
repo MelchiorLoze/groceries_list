@@ -1,22 +1,33 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { NestableScrollContainer } from 'react-native-draggable-flatlist';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import { ProductList } from '../../components';
 import { useProductContext } from '../../contexts/ProductsContext';
 
 const ProductsScreen: React.FC = () => {
-  const { productItems, addProduct } = useProductContext();
+  const {
+    productsToBuy,
+    setProductsToBuy,
+    productsHistory,
+    setProductsHistory,
+    addProduct,
+  } = useProductContext();
 
   return (
     <View style={styles.container}>
-      <ProductList
-        title="Products to buy"
-        productItems={productItems.filter((item) => item.quantity)}
-      />
-      <ProductList
-        title="History"
-        productItems={productItems.filter((item) => !item.quantity)}
-      />
+      <NestableScrollContainer contentContainerStyle={styles.listsContainer}>
+        <ProductList
+          title="Products to buy"
+          products={productsToBuy}
+          setProducts={setProductsToBuy}
+        />
+        <ProductList
+          title="History"
+          products={productsHistory}
+          setProducts={setProductsHistory}
+        />
+      </NestableScrollContainer>
       <Pressable
         style={styles.addButton}
         onPress={addProduct}
@@ -31,8 +42,10 @@ const ProductsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    gap: 16,
     padding: 16,
+  },
+  listsContainer: {
+    gap: 16,
   },
   addButton: {
     position: 'absolute',

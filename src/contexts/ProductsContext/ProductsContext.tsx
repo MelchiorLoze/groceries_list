@@ -4,18 +4,28 @@ import React, {
   PropsWithChildren,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
+import uuid from 'react-native-uuid';
+
+import { SwipeableItemImperativeRef } from 'react-native-swipeable-item';
 import { Product } from '../../types/Product';
 
 interface ProductContextProps {
-  productItems: Product[];
+  productsToBuy: Product[];
+  setProductsToBuy: (items: Product[]) => void;
+  productsHistory: Product[];
+  setProductsHistory: (items: Product[]) => void;
   addProduct: () => void;
   updateProduct: (product: Product) => void;
-  removeProduct: (id: number) => void;
-  focusedItemId: number | null;
+  removeProduct: (id: Product['id']) => void;
+  focusedItemId: Product['id'] | null;
   unsetFocusedItemId: () => void;
+  itemRefs: React.MutableRefObject<
+    Map<Product['id'], SwipeableItemImperativeRef>
+  >;
 }
 
 const ProductContext = createContext<ProductContextProps | undefined>(
@@ -23,53 +33,93 @@ const ProductContext = createContext<ProductContextProps | undefined>(
 );
 
 export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [productItems, setProductItems] = useState<Product[]>([]);
-  const [focusedItemId, setFocusedItemId] = useState<number | null>(null);
+  const [productsToBuy, setProductsToBuy] = useState<Product[]>([]);
+  const [productsHistory, setProductsHistory] = useState<Product[]>([]);
+  const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
+  const itemRefs = useRef(new Map());
 
   useEffect(() => {
-    AsyncStorage.getItem('productItems', (error, result) => {
-      if (!error && result?.length) setProductItems(JSON.parse(result));
+    AsyncStorage.getItem('productsToBuy', (error, result) => {
+      if (!error && result?.length) setProductsToBuy(JSON.parse(result));
+    });
+    AsyncStorage.getItem('productsHistory', (error, result) => {
+      if (!error && result?.length) setProductsHistory(JSON.parse(result));
     });
   }, []);
 
   useEffect(() => {
-    if (productItems.length)
-      AsyncStorage.setItem('productItems', JSON.stringify(productItems));
-  }, [productItems]);
+    if (productsToBuy.length)
+      AsyncStorage.setItem('productsToBuy', JSON.stringify(productsToBuy));
+  }, [productsToBuy]);
+
+  useEffect(() => {
+    if (productsHistory.length)
+      AsyncStorage.setItem('productsHistory', JSON.stringify(productsHistory));
+  }, [productsHistory]);
 
   const addProduct = () => {
-    if (productItems.length < 100) {
-      const productItemsCount = productItems.length;
-      setProductItems([
-        ...productItems,
+    if (productsToBuy.length < 100) {
+      const newProductId = uuid.v4() as string;
+      setProductsToBuy([
+        ...productsToBuy,
         {
-          id: productItemsCount + 1,
+          id: newProductId,
           name: '',
           quantity: 1,
         },
       ]);
-      setFocusedItemId(productItemsCount + 1);
+      setFocusedItemId(newProductId);
     }
   };
 
   const updateProduct = (product: Product) => {
-    setProductItems((prevItems) => {
-      const newItems = [...prevItems];
-      const itemIndexToUpdate = newItems.findIndex(
+    const productToBuyIndexToUpdate = productsToBuy.findIndex(
+      (item) => item.id === product.id,
+    );
+    if (productToBuyIndexToUpdate !== -1) {
+      const newProductsToBuy = [...productsToBuy];
+      if (product.quantity === 0) {
+        newProductsToBuy.splice(productToBuyIndexToUpdate, 1);
+        setProductsHistory([product, ...productsHistory]);
+      } else {
+        newProductsToBuy[productToBuyIndexToUpdate] = product;
+      }
+      setProductsToBuy(newProductsToBuy);
+    } else {
+      const productHistoryIndexToUpdate = productsHistory.findIndex(
         (item) => item.id === product.id,
       );
-      newItems[itemIndexToUpdate] = product;
-      return newItems;
-    });
+      if (productHistoryIndexToUpdate !== -1) {
+        const newProductsHistory = [...productsHistory];
+        if (product.quantity > 0) {
+          newProductsHistory.splice(productHistoryIndexToUpdate, 1);
+          setProductsToBuy([product, ...productsToBuy]);
+        } else {
+          newProductsHistory[productHistoryIndexToUpdate] = product;
+        }
+        setProductsHistory(newProductsHistory);
+      }
+    }
   };
 
-  const removeProduct = (id: number) => {
-    setProductItems((prevItems) => {
-      const newItems = [...prevItems];
-      const itemIndexToRemove = newItems.findIndex((item) => item.id === id);
-      newItems.splice(itemIndexToRemove, 1);
-      return newItems;
-    });
+  const removeProduct = (id: Product['id']) => {
+    const productToBuyIndexToRemove = productsToBuy.findIndex(
+      (item) => item.id === id,
+    );
+    if (productToBuyIndexToRemove !== -1) {
+      const newProductsToBuy = [...productsToBuy];
+      newProductsToBuy.splice(productToBuyIndexToRemove, 1);
+      setProductsToBuy(newProductsToBuy);
+    } else {
+      const productHistoryIndexToRemove = productsHistory.findIndex(
+        (item) => item.id === id,
+      );
+      if (productHistoryIndexToRemove !== -1) {
+        const newProductsHistory = [...productsHistory];
+        newProductsHistory.splice(productHistoryIndexToRemove, 1);
+        setProductsHistory(newProductsHistory);
+      }
+    }
   };
 
   const unsetFocusedItemId = () => {
@@ -79,12 +129,16 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <ProductContext.Provider
       value={{
-        productItems,
+        productsToBuy,
+        setProductsToBuy,
+        productsHistory,
+        setProductsHistory,
         addProduct,
         updateProduct,
         removeProduct,
         focusedItemId,
         unsetFocusedItemId,
+        itemRefs,
       }}>
       {children}
     </ProductContext.Provider>

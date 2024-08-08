@@ -1,36 +1,63 @@
 import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { type Product } from '../types/Product';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { NestableDraggableFlatList } from 'react-native-draggable-flatlist';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Product } from '../types/Product';
 import ProductItem from './ProductItem';
+
+const ACTIVATION_DISTANCE = 20;
 
 interface ProductListProps {
   title: string;
-  productItems: Product[];
+  products: Product[];
+  setProducts: (products: Product[]) => void;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ title, productItems }) => {
-  return (
-    <View style={styles.container}>
+const ProductList: React.FC<ProductListProps> = ({
+  title,
+  products,
+  setProducts,
+}) => (
+  <>
+    <View style={styles.header}>
       <Text style={styles.title}>{title}</Text>
-      <FlatList
-        contentContainerStyle={styles.itemList}
-        data={productItems}
-        renderItem={(itemInfo) => <ProductItem product={itemInfo.item} />}
-      />
+      {products.length > 0 && (
+        <Pressable
+          onPress={() => setProducts([])}
+          accessibilityRole="button"
+          accessibilityLabel={`Remove all ${title.toLowerCase()}`}>
+          <Icon name="trash-alt" size={16} />
+        </Pressable>
+      )}
     </View>
-  );
-};
+    <NestableDraggableFlatList
+      contentContainerStyle={styles.list}
+      data={products}
+      renderItem={({ item, drag }) => (
+        <ProductItem product={item} drag={drag} />
+      )}
+      keyExtractor={(item) => item.id.toString()}
+      onDragEnd={({ data }) => setProducts(data)}
+      activationDistance={ACTIVATION_DISTANCE}
+      testID={`${title.toLowerCase().replaceAll(' ', '-')}-list`}
+    />
+  </>
+);
 
 const styles = StyleSheet.create({
-  container: {
-    //height: '50%',
-    gap: 16,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
   },
-  itemList: {
+  deleteAllButton: {
+    padding: 8,
+  },
+  list: {
     gap: 8,
   },
 });
