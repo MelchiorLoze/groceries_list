@@ -3,6 +3,7 @@ import 'react-native';
 
 import { it } from '@jest/globals';
 import {
+  act,
   render,
   screen,
   userEvent,
@@ -23,16 +24,12 @@ const product1: Product = { id: '1', name: 'item 1', quantity: 2 };
 
 const getProductListTestInstance = async (
   id: string,
-): Promise<ReactTestInstance> => {
-  return await screen.findByTestId(id);
-};
+): Promise<ReactTestInstance> => await screen.findByTestId(id);
 
 const getProductItemTestInstance = async (
   id: string,
   productList: ReactTestInstance,
-): Promise<ReactTestInstance> => {
-  return await within(productList).findByTestId(id);
-};
+): Promise<ReactTestInstance> => await within(productList).findByTestId(id);
 
 const Wrapper: React.FC<PropsWithChildren> = ({ children }) => (
   <ProductProvider>{children}</ProductProvider>
@@ -215,7 +212,7 @@ it('marks a product as bought when pressing the cart button', async () => {
   const markAsBoughtButton = within(productsToBuyList).getByRole('button', {
     name: `Mark ${product1.name} as bought`,
   });
-  await user.press(markAsBoughtButton);
+  act(markAsBoughtButton.props.onClick); // Simulate press on underlay
 
   expect(
     within(productsToBuyList).queryByDisplayValue(product1.name),
@@ -243,7 +240,7 @@ it('removes a product when pressing the trash button', async () => {
   const removeButton = within(productsToBuyList).getByRole('button', {
     name: `Remove product ${product1.name}`,
   });
-  await user.press(removeButton);
+  act(removeButton.props.onClick); // Simulate press on underlay
 
   expect(screen.queryByDisplayValue(product1.name)).toBeNull();
 });

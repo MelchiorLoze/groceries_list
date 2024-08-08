@@ -31,7 +31,7 @@ it('adds a product', async () => {
 
   await waitFor(() => expect(result.current.productsToBuy).toEqual([item1]));
 
-  act(() => result.current.addProduct());
+  act(result.current.addProduct);
 
   await waitFor(() =>
     expect(result.current.productsToBuy).toEqual([

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Pressable, StyleSheet } from 'react-native';
 import { OpacityDecorator } from 'react-native-draggable-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useProductContext } from '../contexts/ProductsContext';
@@ -9,21 +9,19 @@ import SwipeableItem, {
   SwipeableItemImperativeRef,
   useSwipeableItemParams,
 } from 'react-native-swipeable-item';
+import ProductItemContent from './ProductItemContent';
 
 const OVERSWIPE_DISTANCE = 10;
 const SWIPEABLE_ITEM_HEIGHT = 48;
 
-interface UnderLayLeftProps {
-  onPress: () => void;
-}
-
-const UnderLayLeft: React.FC<UnderLayLeftProps> = ({ onPress }) => {
+const UnderlayLeftRemoveProduct: React.FC = () => {
   const { item } = useSwipeableItemParams<Product>();
+  const { removeProduct } = useProductContext();
 
   return (
     <Pressable
-      style={styles.underlayLeftCta}
-      onPress={onPress}
+      style={[styles.underlay, styles.underlayLeft, styles.removeProductCta]}
+      onPress={() => removeProduct(item.id)}
       accessibilityRole="button"
       accessibilityLabel={`Remove product ${item.name}`}>
       <Icon name="trash" color="white" size={16} />
@@ -31,17 +29,14 @@ const UnderLayLeft: React.FC<UnderLayLeftProps> = ({ onPress }) => {
   );
 };
 
-interface UnderlayRightProps {
-  onPress: () => void;
-}
-
-const UnderlayRight: React.FC<UnderlayRightProps> = ({ onPress }) => {
+const UnderlayRightMarkAsBought: React.FC = () => {
   const { item } = useSwipeableItemParams<Product>();
+  const { updateProduct } = useProductContext();
 
   return (
     <Pressable
-      style={styles.underlayRightCta}
-      onPress={onPress}
+      style={[styles.underlay, styles.underlayRight, styles.markAsBoughtCta]}
+      onPress={() => updateProduct({ ...item, quantity: 0 })}
       accessibilityRole="button"
       accessibilityLabel={`Mark ${item.name} as bought`}>
       <Icon name="cart-plus" color="white" size={16} />
@@ -51,7 +46,7 @@ const UnderlayRight: React.FC<UnderlayRightProps> = ({ onPress }) => {
 
 interface ProductItemProps {
   product: Product;
-  drag?: () => void;
+  drag: () => void;
   itemRefs: React.MutableRefObject<
     Map<Product['id'], SwipeableItemImperativeRef>
   >;
@@ -61,143 +56,49 @@ const ProductItem: React.FC<ProductItemProps> = ({
   product,
   itemRefs,
   drag,
-}) => {
-  const { updateProduct, removeProduct, focusedItemId, unsetFocusedItemId } =
-    useProductContext();
-  const inputRef = useRef<TextInput>(null);
-
-  useEffect(() => {
-    if (inputRef?.current && product.id === focusedItemId) {
-      inputRef.current.focus();
-      unsetFocusedItemId();
-    }
-  }, [focusedItemId, inputRef, product, unsetFocusedItemId]);
-
-  return (
-    <OpacityDecorator activeOpacity={0.5}>
-      <SwipeableItem
-        key={product.id}
-        item={product}
-        ref={(ref) => {
-          if (ref && !itemRefs.current.get(product.id))
-            itemRefs.current.set(product.id, ref);
-        }}
-        onChange={() => {
-          // Close all other open items
-          [...itemRefs.current.entries()].forEach(([key, ref]) => {
-            if (key !== product.id && ref) ref.close();
-          });
-        }}
-        renderUnderlayLeft={() => (
-          <UnderLayLeft onPress={() => removeProduct(product.id)} />
-        )}
-        snapPointsLeft={[SWIPEABLE_ITEM_HEIGHT]}
-        renderUnderlayRight={() => (
-          <UnderlayRight
-            onPress={() => updateProduct({ ...product, quantity: 0 })}
-          />
-        )}
-        snapPointsRight={product.quantity > 0 ? [SWIPEABLE_ITEM_HEIGHT] : []}
-        overSwipe={OVERSWIPE_DISTANCE}>
-        <View style={styles.container} testID={product.id.toString()}>
-          <View style={styles.wrapper}>
-            <Pressable
-              style={styles.cta}
-              onLongPress={drag}
-              accessibilityRole="button">
-              <Icon name="grip-horizontal" size={16} color="lightgrey" />
-            </Pressable>
-            <TextInput
-              ref={inputRef}
-              style={styles.nameInput}
-              value={product.name}
-              onChangeText={(newName) => {
-                if (newName !== product.name)
-                  updateProduct({ ...product, name: newName });
-              }}
-              onBlur={() => {
-                if (!product.name)
-                  updateProduct({ ...product, name: 'New product' });
-              }}
-            />
-          </View>
-          <View style={styles.wrapper}>
-            <Text>x{product.quantity}</Text>
-            <View style={styles.quantityCtaContainer}>
-              <Pressable
-                style={styles.cta}
-                onPress={() =>
-                  updateProduct({ ...product, quantity: product.quantity + 1 })
-                }
-                accessibilityRole="button"
-                accessibilityLabel={`Add one ${product.name}`}>
-                <Icon name="plus" size={16} />
-              </Pressable>
-              {product.quantity > 0 && (
-                <Pressable
-                  style={styles.cta}
-                  onPress={() =>
-                    updateProduct({
-                      ...product,
-                      quantity: product.quantity - 1,
-                    })
-                  }
-                  accessibilityRole="button"
-                  accessibilityLabel={`Remove one ${product.name}`}>
-                  <Icon name="minus" size={16} />
-                </Pressable>
-              )}
-            </View>
-          </View>
-        </View>
-      </SwipeableItem>
-    </OpacityDecorator>
-  );
-};
+}) => (
+  <OpacityDecorator activeOpacity={0.5}>
+    <SwipeableItem
+      key={product.id}
+      item={product}
+      ref={(ref) => {
+        if (ref && !itemRefs.current.get(product.id))
+          itemRefs.current.set(product.id, ref);
+      }}
+      onChange={() => {
+        // Close all other open items
+        [...itemRefs.current.entries()].forEach(([key, ref]) => {
+          if (key !== product.id && ref) ref.close();
+        });
+      }}
+      renderUnderlayLeft={() => <UnderlayLeftRemoveProduct />}
+      snapPointsLeft={[SWIPEABLE_ITEM_HEIGHT]}
+      renderUnderlayRight={() => <UnderlayRightMarkAsBought />}
+      snapPointsRight={product.quantity > 0 ? [SWIPEABLE_ITEM_HEIGHT] : []}
+      overSwipe={OVERSWIPE_DISTANCE}>
+      <ProductItemContent product={product} drag={drag} />
+    </SwipeableItem>
+  </OpacityDecorator>
+);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 8,
-    gap: 8,
-    backgroundColor: 'white',
-    borderRadius: 8,
-  },
-  wrapper: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-  },
-  cta: {
-    padding: 8,
-  },
-  nameInput: {
-    padding: 0,
-    height: '100%',
-  },
-  quantityCtaContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'lightgray',
-  },
-  underlayLeftCta: {
+  underlay: {
     flex: 1,
     justifyContent: 'center',
+    padding: 16,
+    borderRadius: 8,
+  },
+  underlayLeft: {
     alignItems: 'flex-end',
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: 'red',
   },
-  underlayRightCta: {
-    flex: 1,
-    justifyContent: 'center',
+  underlayRight: {
     alignItems: 'flex-start',
-    padding: 16,
-    borderRadius: 8,
+  },
+  markAsBoughtCta: {
     backgroundColor: 'green',
+  },
+  removeProductCta: {
+    backgroundColor: 'red',
   },
 });
 
