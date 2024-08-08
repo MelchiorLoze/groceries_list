@@ -23,7 +23,7 @@ const UnderlayLeftRemoveProduct: React.FC = () => {
       onPress={() => removeProduct(item.id)}
       accessibilityRole="button"
       accessibilityLabel={`Remove product ${item.name}`}>
-      <Icon name="trash" color="white" size={16} />
+      <Icon name="trash-alt" color="white" size={16} />
     </Pressable>
   );
 };

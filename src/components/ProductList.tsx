@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { NestableDraggableFlatList } from 'react-native-draggable-flatlist';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Product } from '../types/Product';
 import ProductItem from './ProductItem';
 
@@ -18,7 +19,17 @@ const ProductList: React.FC<ProductListProps> = ({
   setProducts,
 }) => (
   <>
-    <Text style={styles.listTitle}>{title}</Text>
+    <View style={styles.header}>
+      <Text style={styles.title}>{title}</Text>
+      {products.length > 0 && (
+        <Pressable
+          onPress={() => setProducts([])}
+          accessibilityRole="button"
+          accessibilityLabel={`Remove all ${title.toLowerCase()}`}>
+          <Icon name="trash-alt" size={16} />
+        </Pressable>
+      )}
+    </View>
     <NestableDraggableFlatList
       contentContainerStyle={styles.list}
       data={products}
@@ -34,9 +45,17 @@ const ProductList: React.FC<ProductListProps> = ({
 );
 
 const styles = StyleSheet.create({
-  listTitle: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  deleteAllButton: {
+    padding: 8,
   },
   list: {
     gap: 8,

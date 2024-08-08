@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -29,7 +29,7 @@ const getTabBarIcon = (route: { name: Route }, color: string, size: number) => {
       iconName = 'list-ul';
       break;
     case Route.PANTRY:
-      iconName = 'snowflake-o';
+      iconName = 'snowflake';
       break;
     default:
       iconName = 'warning';

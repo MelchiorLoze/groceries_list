@@ -227,7 +227,7 @@ it('marks a product as bought when pressing the cart button', async () => {
   within(historyItem).getByText('x0');
 });
 
-it('removes a product when pressing the trash button', async () => {
+it('removes a product when pressing the item trash button', async () => {
   await AsyncStorage.setItem('productsToBuy', JSON.stringify([product1]));
 
   render(<ProductScreens />, { wrapper: Wrapper });
@@ -243,4 +243,27 @@ it('removes a product when pressing the trash button', async () => {
   act(removeButton.props.onClick); // Simulate press on underlay
 
   expect(screen.queryByDisplayValue(product1.name)).toBeNull();
+});
+
+it('removes all products when pressing the list trash button', async () => {
+  const product2: Product = { id: '2', name: 'item 2', quantity: 1 };
+  await AsyncStorage.setItem(
+    'productsToBuy',
+    JSON.stringify([product1, product2]),
+  );
+
+  render(<ProductScreens />, { wrapper: Wrapper });
+
+  const productsToBuyList = await getProductListTestInstance(
+    'products-to-buy-list',
+  );
+  await getProductItemTestInstance(product1.id, productsToBuyList);
+
+  const removeAllButton = screen.getByRole('button', {
+    name: 'Remove all products to buy',
+  });
+  await user.press(removeAllButton);
+
+  expect(screen.queryByDisplayValue(product1.name)).toBeNull();
+  expect(screen.queryByDisplayValue(product2.name)).toBeNull();
 });
