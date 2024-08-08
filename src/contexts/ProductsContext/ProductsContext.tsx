@@ -4,11 +4,13 @@ import React, {
   PropsWithChildren,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
 import uuid from 'react-native-uuid';
 
+import { SwipeableItemImperativeRef } from 'react-native-swipeable-item';
 import { Product } from '../../types/Product';
 
 interface ProductContextProps {
@@ -21,6 +23,9 @@ interface ProductContextProps {
   removeProduct: (id: Product['id']) => void;
   focusedItemId: Product['id'] | null;
   unsetFocusedItemId: () => void;
+  itemRefs: React.MutableRefObject<
+    Map<Product['id'], SwipeableItemImperativeRef>
+  >;
 }
 
 const ProductContext = createContext<ProductContextProps | undefined>(
@@ -31,6 +36,7 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [productsToBuy, setProductsToBuy] = useState<Product[]>([]);
   const [productsHistory, setProductsHistory] = useState<Product[]>([]);
   const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
+  const itemRefs = useRef(new Map());
 
   useEffect(() => {
     AsyncStorage.getItem('productsToBuy', (error, result) => {
@@ -132,6 +138,7 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
         removeProduct,
         focusedItemId,
         unsetFocusedItemId,
+        itemRefs,
       }}>
       {children}
     </ProductContext.Provider>

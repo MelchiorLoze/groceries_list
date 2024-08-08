@@ -1,11 +1,8 @@
-import React, { useRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import {
-  NestableDraggableFlatList,
-  NestableScrollContainer,
-} from 'react-native-draggable-flatlist';
+import React from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { NestableScrollContainer } from 'react-native-draggable-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ProductItem } from '../../components';
+import { ProductList } from '../../components';
 import { useProductContext } from '../../contexts/ProductsContext';
 
 const ProductsScreen: React.FC = () => {
@@ -16,37 +13,19 @@ const ProductsScreen: React.FC = () => {
     setProductsHistory,
     addProduct,
   } = useProductContext();
-  const itemRefs = useRef(new Map());
 
   return (
     <View style={styles.container}>
       <NestableScrollContainer contentContainerStyle={styles.listsContainer}>
-        <Text style={styles.listTitle}>Products to buy</Text>
-        <NestableDraggableFlatList
-          contentContainerStyle={styles.list}
-          data={productsToBuy}
-          renderItem={({ item, drag }) => (
-            <ProductItem product={item} itemRefs={itemRefs} drag={drag} />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          onDragEnd={({ data }) => {
-            setProductsToBuy(data);
-          }}
-          activationDistance={20}
-          testID="products-to-buy-list"
+        <ProductList
+          title="Products to buy"
+          products={productsToBuy}
+          setProducts={setProductsToBuy}
         />
-        <Text style={styles.listTitle}>History</Text>
-        <NestableDraggableFlatList
-          contentContainerStyle={styles.list}
-          data={productsHistory}
-          renderItem={({ item, drag }) => (
-            <ProductItem product={item} itemRefs={itemRefs} drag={drag} />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          onDragEnd={({ data }) => {
-            setProductsHistory(data);
-          }}
-          testID="history-list"
+        <ProductList
+          title="History"
+          products={productsHistory}
+          setProducts={setProductsHistory}
         />
       </NestableScrollContainer>
       <Pressable
@@ -67,13 +46,6 @@ const styles = StyleSheet.create({
   },
   listsContainer: {
     gap: 16,
-  },
-  listTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  list: {
-    gap: 8,
   },
   addButton: {
     position: 'absolute',

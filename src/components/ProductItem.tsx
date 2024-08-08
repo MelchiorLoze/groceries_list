@@ -6,7 +6,6 @@ import { useProductContext } from '../contexts/ProductsContext';
 import { Product } from '../types/Product';
 
 import SwipeableItem, {
-  SwipeableItemImperativeRef,
   useSwipeableItemParams,
 } from 'react-native-swipeable-item';
 import ProductItemContent from './ProductItemContent';
@@ -47,39 +46,35 @@ const UnderlayRightMarkAsBought: React.FC = () => {
 interface ProductItemProps {
   product: Product;
   drag: () => void;
-  itemRefs: React.MutableRefObject<
-    Map<Product['id'], SwipeableItemImperativeRef>
-  >;
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({
-  product,
-  itemRefs,
-  drag,
-}) => (
-  <OpacityDecorator activeOpacity={0.5}>
-    <SwipeableItem
-      key={product.id}
-      item={product}
-      ref={(ref) => {
-        if (ref && !itemRefs.current.get(product.id))
-          itemRefs.current.set(product.id, ref);
-      }}
-      onChange={() => {
-        // Close all other open items
-        [...itemRefs.current.entries()].forEach(([key, ref]) => {
-          if (key !== product.id && ref) ref.close();
-        });
-      }}
-      renderUnderlayLeft={() => <UnderlayLeftRemoveProduct />}
-      snapPointsLeft={[SWIPEABLE_ITEM_HEIGHT]}
-      renderUnderlayRight={() => <UnderlayRightMarkAsBought />}
-      snapPointsRight={product.quantity > 0 ? [SWIPEABLE_ITEM_HEIGHT] : []}
-      overSwipe={OVERSWIPE_DISTANCE}>
-      <ProductItemContent product={product} drag={drag} />
-    </SwipeableItem>
-  </OpacityDecorator>
-);
+const ProductItem: React.FC<ProductItemProps> = ({ product, drag }) => {
+  const { itemRefs } = useProductContext();
+  return (
+    <OpacityDecorator activeOpacity={0.5}>
+      <SwipeableItem
+        key={product.id}
+        item={product}
+        ref={(ref) => {
+          if (ref && !itemRefs.current.get(product.id))
+            itemRefs.current.set(product.id, ref);
+        }}
+        onChange={() => {
+          // Close all other open items
+          [...itemRefs.current.entries()].forEach(([key, ref]) => {
+            if (key !== product.id && ref) ref.close();
+          });
+        }}
+        renderUnderlayLeft={() => <UnderlayLeftRemoveProduct />}
+        snapPointsLeft={[SWIPEABLE_ITEM_HEIGHT]}
+        renderUnderlayRight={() => <UnderlayRightMarkAsBought />}
+        snapPointsRight={product.quantity > 0 ? [SWIPEABLE_ITEM_HEIGHT] : []}
+        overSwipe={OVERSWIPE_DISTANCE}>
+        <ProductItemContent product={product} drag={drag} />
+      </SwipeableItem>
+    </OpacityDecorator>
+  );
+};
 
 const styles = StyleSheet.create({
   underlay: {
