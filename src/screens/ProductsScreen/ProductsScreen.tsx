@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   NestableDraggableFlatList,
   NestableScrollContainer,
 } from 'react-native-draggable-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ProductItem from '../../components/ProductItem';
+import { ProductItem } from '../../components';
 import { useProductContext } from '../../contexts/ProductsContext';
 
 const ProductsScreen: React.FC = () => {
@@ -16,6 +16,7 @@ const ProductsScreen: React.FC = () => {
     setProductsHistory,
     addProduct,
   } = useProductContext();
+  const itemRefs = useRef(new Map());
 
   return (
     <View style={styles.container}>
@@ -25,24 +26,27 @@ const ProductsScreen: React.FC = () => {
           contentContainerStyle={styles.list}
           data={productsToBuy}
           renderItem={({ item, drag }) => (
-            <ProductItem product={item} drag={drag} />
+            <ProductItem product={item} itemRefs={itemRefs} drag={drag} />
           )}
           keyExtractor={(item) => item.id.toString()}
           onDragEnd={({ data }) => {
             setProductsToBuy(data);
           }}
+          activationDistance={20}
+          testID="products-to-buy-list"
         />
         <Text style={styles.listTitle}>History</Text>
         <NestableDraggableFlatList
           contentContainerStyle={styles.list}
           data={productsHistory}
           renderItem={({ item, drag }) => (
-            <ProductItem product={item} drag={drag} />
+            <ProductItem product={item} itemRefs={itemRefs} drag={drag} />
           )}
           keyExtractor={(item) => item.id.toString()}
           onDragEnd={({ data }) => {
             setProductsHistory(data);
           }}
+          testID="history-list"
         />
       </NestableScrollContainer>
       <Pressable

@@ -18,8 +18,8 @@ interface ProductContextProps {
   setProductsHistory: (items: Product[]) => void;
   addProduct: () => void;
   updateProduct: (product: Product) => void;
-  removeProduct: (id: string) => void;
-  focusedItemId: string | null;
+  removeProduct: (id: Product['id']) => void;
+  focusedItemId: Product['id'] | null;
   unsetFocusedItemId: () => void;
 }
 
@@ -96,7 +96,7 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  const removeProduct = (id: string) => {
+  const removeProduct = (id: Product['id']) => {
     const productToBuyIndexToRemove = productsToBuy.findIndex(
       (item) => item.id === id,
     );
