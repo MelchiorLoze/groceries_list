@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
 import { useProductContext } from '../contexts/ProductsContext';
 import { Product } from '../types/Product';
 

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import { OpacityDecorator } from 'react-native-draggable-flatlist';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { useProductContext } from '../contexts/ProductsContext';
-import { Product } from '../types/Product';
 
+import { OpacityDecorator } from 'react-native-draggable-flatlist';
 import SwipeableItem, {
   useSwipeableItemParams,
 } from 'react-native-swipeable-item';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
+import { useProductContext } from '../contexts/ProductsContext';
+import { Product } from '../types/Product';
 import ProductItemContent from './ProductItemContent';
 
 const OVERSWIPE_DISTANCE = 10;

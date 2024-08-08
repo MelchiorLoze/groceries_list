@@ -1,7 +1,5 @@
 import React from 'react';
-import 'react-native';
 
-import { it } from '@jest/globals';
 import { render, screen } from '@testing-library/react-native';
 
 import PantryScreen from './PantryScreen';

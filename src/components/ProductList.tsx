@@ -1,7 +1,9 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { NestableDraggableFlatList } from 'react-native-draggable-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
 import { Product } from '../types/Product';
 import ProductItem from './ProductItem';
 
@@ -23,6 +25,7 @@ const ProductList: React.FC<ProductListProps> = ({
       <Text style={styles.title}>{title}</Text>
       {products.length > 0 && (
         <Pressable
+          style={styles.deleteAllButton}
           onPress={() => setProducts([])}
           accessibilityRole="button"
           accessibilityLabel={`Remove all ${title.toLowerCase()}`}>

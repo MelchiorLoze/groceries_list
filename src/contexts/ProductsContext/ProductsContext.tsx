@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {
   createContext,
   PropsWithChildren,
@@ -8,9 +7,10 @@ import React, {
   useState,
 } from 'react';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SwipeableItemImperativeRef } from 'react-native-swipeable-item';
 import uuid from 'react-native-uuid';
 
-import { SwipeableItemImperativeRef } from 'react-native-swipeable-item';
 import { Product } from '../../types/Product';
 
 interface ProductContextProps {
@@ -48,13 +48,11 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (productsToBuy.length)
-      AsyncStorage.setItem('productsToBuy', JSON.stringify(productsToBuy));
+    AsyncStorage.setItem('productsToBuy', JSON.stringify(productsToBuy));
   }, [productsToBuy]);
 
   useEffect(() => {
-    if (productsHistory.length)
-      AsyncStorage.setItem('productsHistory', JSON.stringify(productsHistory));
+    AsyncStorage.setItem('productsHistory', JSON.stringify(productsHistory));
   }, [productsHistory]);
 
   const addProduct = () => {
@@ -73,29 +71,29 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
   };
 
   const updateProduct = (product: Product) => {
-    const productToBuyIndexToUpdate = productsToBuy.findIndex(
+    const productToBuyToUpdateIndex = productsToBuy.findIndex(
       (item) => item.id === product.id,
     );
-    if (productToBuyIndexToUpdate !== -1) {
+    if (productToBuyToUpdateIndex !== -1) {
       const newProductsToBuy = [...productsToBuy];
       if (product.quantity === 0) {
-        newProductsToBuy.splice(productToBuyIndexToUpdate, 1);
+        newProductsToBuy.splice(productToBuyToUpdateIndex, 1);
         setProductsHistory([product, ...productsHistory]);
       } else {
-        newProductsToBuy[productToBuyIndexToUpdate] = product;
+        newProductsToBuy[productToBuyToUpdateIndex] = product;
       }
       setProductsToBuy(newProductsToBuy);
     } else {
-      const productHistoryIndexToUpdate = productsHistory.findIndex(
+      const productHistoryToUpdateIndex = productsHistory.findIndex(
         (item) => item.id === product.id,
       );
-      if (productHistoryIndexToUpdate !== -1) {
+      if (productHistoryToUpdateIndex !== -1) {
         const newProductsHistory = [...productsHistory];
         if (product.quantity > 0) {
-          newProductsHistory.splice(productHistoryIndexToUpdate, 1);
+          newProductsHistory.splice(productHistoryToUpdateIndex, 1);
           setProductsToBuy([product, ...productsToBuy]);
         } else {
-          newProductsHistory[productHistoryIndexToUpdate] = product;
+          newProductsHistory[productHistoryToUpdateIndex] = product;
         }
         setProductsHistory(newProductsHistory);
       }
@@ -103,20 +101,20 @@ export const ProductProvider: React.FC<PropsWithChildren> = ({ children }) => {
   };
 
   const removeProduct = (id: Product['id']) => {
-    const productToBuyIndexToRemove = productsToBuy.findIndex(
+    const productToBuyToRemoveIndex = productsToBuy.findIndex(
       (item) => item.id === id,
     );
-    if (productToBuyIndexToRemove !== -1) {
+    if (productToBuyToRemoveIndex !== -1) {
       const newProductsToBuy = [...productsToBuy];
-      newProductsToBuy.splice(productToBuyIndexToRemove, 1);
+      newProductsToBuy.splice(productToBuyToRemoveIndex, 1);
       setProductsToBuy(newProductsToBuy);
     } else {
-      const productHistoryIndexToRemove = productsHistory.findIndex(
+      const productHistoryToRemoveIndex = productsHistory.findIndex(
         (item) => item.id === id,
       );
-      if (productHistoryIndexToRemove !== -1) {
+      if (productHistoryToRemoveIndex !== -1) {
         const newProductsHistory = [...productsHistory];
-        newProductsHistory.splice(productHistoryIndexToRemove, 1);
+        newProductsHistory.splice(productHistoryToRemoveIndex, 1);
         setProductsHistory(newProductsHistory);
       }
     }

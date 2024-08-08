@@ -1,11 +1,12 @@
+import React from 'react';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { KeyboardAvoidingView, Platform } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ProductProvider } from './src/contexts/ProductsContext';
 import { PantryScreen } from './src/screens/PantryScreen';
 import { ProductsScreen } from './src/screens/ProductsScreen';

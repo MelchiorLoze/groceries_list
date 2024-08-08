@@ -1,7 +1,9 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+
 import { NestableScrollContainer } from 'react-native-draggable-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
 import { ProductList } from '../../components';
 import { useProductContext } from '../../contexts/ProductsContext';
 

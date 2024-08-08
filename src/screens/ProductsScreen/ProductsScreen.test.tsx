@@ -1,7 +1,6 @@
 import React, { PropsWithChildren } from 'react';
-import 'react-native';
 
-import { it } from '@jest/globals';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   act,
   render,
@@ -9,9 +8,8 @@ import {
   userEvent,
   within,
 } from '@testing-library/react-native';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ReactTestInstance } from 'react-test-renderer';
+
 import { ProductProvider } from '../../contexts/ProductsContext';
 import { Product } from '../../types/Product';
 import ProductScreens from './ProductsScreen';
