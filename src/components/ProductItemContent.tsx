@@ -22,7 +22,7 @@ const ProductItemContent: React.FC<ProductItemContentProps> = ({
 
   useEffect(() => {
     if (inputRef?.current && product.id === focusedItemId) {
-      inputRef.current.focus();
+      setTimeout(() => inputRef.current?.focus(), 0);
       unsetFocusedItemId();
     }
   }, [focusedItemId, inputRef, product, unsetFocusedItemId]);
